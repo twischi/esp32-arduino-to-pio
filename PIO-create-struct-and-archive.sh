@@ -101,8 +101,8 @@ sed -i '' "/^$searchLineBy/s/.*/$replaceLine/" $OUT_PIO/tools/platformio-build.p
 #----------------------------------------------------------------------------------------- 
 # PIO modify ALL platformio-build.py in <PIO-OUT>/tools/esp32-arduino-libs/{tagetFolder} 
 # .........................................................................................
-#   from: FRAMEWORK_LIBS_DIR = platform.get_package_dir("framework-arduinoespressif32-libs")
-#   to:   FRAMEWORK_LIBS_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
+#   from: FRAMEWORK_SDK_DIR = ....
+#   to:   FRAMEWORK_SDK_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
 #----------------------------------------------------------------------------------------
 echo -e "\n*** modify platformio-build.py in ALL  <PIO-OUT>/tools/esp32-arduino-libs/{tagetFolder}"
 libFolder=$OUT_PIO/tools/esp32-arduino-libs
@@ -112,7 +112,7 @@ do
     target=$(basename "$tagetFolder") # Get the name of the target (basename of the Path)
     echo -e "   ...  for Target: $eRD$target$eNO"
 sed -i '' '/FRAMEWORK_SDK_DIR = env.PioPlatform().get_package_dir(/ {N; N; c\
-FRAMEWORK_LIBS_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
+FRAMEWORK_SDK_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
 }' $tagetFolder/platformio-build.py
 done
 #-------------------------------------------------------------------------------------------
