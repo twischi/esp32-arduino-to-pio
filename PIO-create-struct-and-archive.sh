@@ -89,16 +89,32 @@ echo -e   "***   Copy from <esp32-arduino-libs>"
 echo -e   "      ...          /*      to  <PIO-OUT>/tools"
 cp -rf $buildLibsPath $OUT_PIO/tools/
 #------------------------------------------------------------------------------- 
-# PIO modify <PIO-OUT>/tools//platformio-build.py 
+# PIO modify <PIO-OUT>/tools/platformio-build.py 
 # ...............................................................................
 #   from: FRAMEWORK_LIBS_DIR = platform.get_package_dir("framework-arduinoespressif32-libs")
 #   to:   FRAMEWORK_LIBS_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
 #-------------------------------------------------------------------------------
-echo -e "      modfied <PIO-OUT>/tools//platformio-build.py FOR FRAMEWORK_LIBS_DIR"
+echo -e "      modify <PIO-OUT>/tools//platformio-build.py FOR FRAMEWORK_LIBS_DIR"
 searchLineBy='FRAMEWORK_LIBS_DIR ='
  replaceLine='FRAMEWORK_LIBS_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")'
 sed -i '' "/^$searchLineBy/s/.*/$replaceLine/" $OUT_PIO/tools/platformio-build.py
-
+#----------------------------------------------------------------------------------------- 
+# PIO modify ALL platformio-build.py in <PIO-OUT>/tools/esp32-arduino-libs/{tagetFolder} 
+# .........................................................................................
+#   from: FRAMEWORK_LIBS_DIR = platform.get_package_dir("framework-arduinoespressif32-libs")
+#   to:   FRAMEWORK_LIBS_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
+#----------------------------------------------------------------------------------------
+echo -e "\n*** modify platformio-build.py in ALL  <PIO-OUT>/tools/esp32-arduino-libs/{tagetFolder}"
+libFolder=$OUT_PIO/tools/esp32-arduino-libs
+targetsFolders=$(find $libFolder -mindepth 1 -maxdepth 1 -type d) # Get all subfolders in <esp32-arduino-libs>
+for tagetFolder in $targetsFolders
+do
+    target=$(basename "$tagetFolder") # Get the name of the target (basename of the Path)
+    echo -e "   ...  for Target: $eRD$target$eNO"
+sed -i '' '/FRAMEWORK_SDK_DIR = env.PioPlatform().get_package_dir(/ {N; N; c\
+FRAMEWORK_LIBS_DIR = join(FRAMEWORK_DIR, "tools", "esp32-arduino-libs")
+}' $tagetFolder/platformio-build.py
+done
 #-------------------------------------------------------------------------------------------
 # EXTRACT Info from alreday copied   <PIO-OUT>/tools/esp32-arduino-libs/versions.txt - File
 #-------------------------------------------------------------------------------------------
@@ -254,7 +270,7 @@ cd $OUT_PIO/..           # Step to source-Folder
 rm -f $pioArchFP         # Remove potential old file
 mkdir -p $OUT_PIO_Relase # Make sure Folder exists
 #          <target>       <source> in currtent dir 
-tar -zcf $pioArchFP framework-arduinoespressif32/
+tar -zcf $pioArchFP --exclude='._*' framework-arduinoespressif32/
 cd $savedPWD              # Step back to script-Folder
 echo -e "      ...  Created: $eRD$pioArchFN$eNO"
 
