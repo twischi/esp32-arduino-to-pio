@@ -167,7 +167,7 @@ echo -e "      ...  <arduino-esp32>-TAG: $eRD$AR_TAG$eNO"
 #-------------------------------------------------------------------------------------------
 echo -e   "***   Get the list of Targets form <esp32-arduino-libs>-Folder"
 targetsList=$(find $buildLibsPath -mindepth 1 -maxdepth 1 -type d -print | sed 's/.*\///' | paste -sd "," -) # Comma-List of Target = Folders
-targetsList="${targetsList//,/,\ }" # Prettiyfy the list with ', ' between the targets instald of pure ',' 
+targetsList=$(echo "$targetsList" | sed 's/,/, /g') # Prettiyfy the list with ', ' between the targets instald of pure ',' 
 echo -e "      ...  Targets: $eRD$targetsList$eNO"
 
 #---------------------------------------------------------
